@@ -1,5 +1,4 @@
 # === classes ===
-@letters = [a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
 @digits       = [zero one two three four five six seven eight nine];
 @digits_sup	  = [uni2070 uni00B9 uni00B2 uni00B3 uni2074 uni2075 uni2076 uni2077 uni2078 uni2079];
 @dec          = [@digits period];
@@ -11,7 +10,7 @@
                  braceleft bar braceright asciitilde tilde];
 @set_containers = [quotesingle quotedbl bracketleft bracketright parenleft parenright braceleft braceright];
 				 
-@any_char = [@letters @digits @digits_sup];
+@any_char = [@digits @digits_sup a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
 
 # === functions ===
 # sub words surrounded by @punct
@@ -116,36 +115,11 @@ lookup power_sub {
 } power_sub;
 
 # === main ===
-# variants for various IDEs
 feature calt {
     lookup inLine_sub;
 	lookup startLine_sub;
 	lookup power_sub;
 } calt;
-
-feature liga {
-    lookup inLine_sub;
-	lookup startLine_sub;
-	lookup power_sub;
-} liga;
-
-feature clig {
-    lookup inLine_sub;
-	lookup startLine_sub;
-	lookup power_sub;
-} clig;
-
-feature dlig {
-    lookup inLine_sub;
-	lookup startLine_sub;
-	lookup power_sub;
-} dlig;
-
-feature rlig {
-    lookup inLine_sub;
-	lookup startLine_sub;
-	lookup power_sub;
-} rlig;
 
 # All features (remove hashtags):
 
