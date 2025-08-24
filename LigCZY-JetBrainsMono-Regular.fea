@@ -1,0 +1,108 @@
+# class of characters that seperate words
+@WrdBrk = [space period comma semicolon colon exclam question hyphen plus
+           asterisk slash backslash equal less greater percent ampersand
+           circumflex tilde parenleft parenright bracketleft bracketright
+           braceleft braceright quotesingle quotedbl];
+
+# lookup rules using apostrophe
+lookup context_sub {
+    sub @WrdBrk i' n' @WrdBrk by element;
+    sub @WrdBrk n' o' t' space' i' n' @WrdBrk by notelement;
+    sub @WrdBrk i' s' s' u' b' s' e' t' @WrdBrk by reflexsubset;
+    sub @WrdBrk i' s' s' u' p' e' r' s' e' t' @WrdBrk by reflexsuperset;
+    sub @WrdBrk i' n' t' e' r' s' e' c' t' i' o' n' @WrdBrk by intersection;
+    sub @WrdBrk u' n' i' o' n' @WrdBrk by union;
+    sub @WrdBrk s' u' m' @WrdBrk by summation;
+    sub @WrdBrk p' r' o' d' @WrdBrk by product;
+    sub @WrdBrk p' i' @WrdBrk by pi;
+} context_sub;
+
+# lookup rules without using apostrophe
+lookup noContext_sub {
+    # '**0'..'**9' -> superscript digits
+    sub asterisk asterisk zero by uni2070;
+    sub asterisk asterisk one by uni00B9;
+    sub asterisk asterisk two by uni00B2;
+    sub asterisk asterisk three by uni00B3;
+    sub asterisk asterisk four by uni2074;
+    sub asterisk asterisk five by uni2075;
+    sub asterisk asterisk six by uni2076;
+    sub asterisk asterisk seven by uni2077;
+    sub asterisk asterisk eight by uni2078;
+    sub asterisk asterisk nine by uni2079;
+} noContext_sub;
+
+# Reuse both lookups from the features
+feature calt {
+    lookup context_sub;
+    lookup noContext_sub;
+} calt;
+
+feature liga {
+    lookup context_sub;
+    lookup noContext_sub;
+} liga;
+
+feature clig {
+    lookup context_sub;
+    lookup noContext_sub;
+} clig;
+
+feature dlig {
+    lookup context_sub;
+    lookup noContext_sub;
+} dlig;
+
+feature rlig {
+    lookup context_sub;
+    lookup noContext_sub;
+} rlig;
+
+# test cases:
+
+# a inb
+# a not inb
+# a issubsetb
+# a issupersetb
+# a intersectionb
+# a unionb
+# a sumb
+# a prodb
+# a pib
+
+# a in b
+# a not in b
+# a issubset b
+# a issuperset b
+# a intersection b
+# a union b
+# a sum b
+# a prod b
+# a pi b
+
+# ain b
+# anot in b
+# aissubset b
+# aissuperset b
+# aintersection b
+# aunion b
+# asum b
+# aprod b
+# api b
+
+# math.prod.
+# math.pi.
+# numpy.prod.
+# numpy.pi.
+
+# 1**0
+# 1**1
+# 1**2
+# 1**3
+# 1**4
+# 1**5
+# 1**6
+# 1**7
+# 1**8
+# 1**9
+# 1**10
