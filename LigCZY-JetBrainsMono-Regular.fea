@@ -1,99 +1,173 @@
-# class of characters that seperate words
-@WrdBrk = [space period comma semicolon colon exclam question hyphen plus
-           asterisk slash backslash equal less greater percent ampersand
-           circumflex tilde parenleft parenright bracketleft bracketright
-           braceleft braceright quotesingle quotedbl];
+# === classes ===
+@letters = [a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
+@digits       = [zero one two three four five six seven eight nine];
+@digits_sup	  = [uni2070 uni00B9 uni00B2 uni00B3 uni2074 uni2075 uni2076 uni2077 uni2078 uni2079];
+@dec          = [@digits period];
+@dec_sup      = [@digits_sup periodcentered];
+@punct        = [space exclam quotedbl numbersign dollar percent ampersand quotesingle
+                 parenleft parenright asterisk plus comma hyphen period slash
+                 colon semicolon less equal greater question at
+                 bracketleft backslash bracketright asciicircum grave
+                 braceleft bar braceright asciitilde tilde];
+@set_containers = [quotesingle quotedbl bracketleft bracketright parenleft parenright braceleft braceright];
+				 
+@any_char = [@letters @digits @digits_sup];
 
-# lookup rules using apostrophe
-lookup context_sub {
-    sub @WrdBrk i' n' @WrdBrk by element;
-    sub @WrdBrk n' o' t' space' i' n' @WrdBrk by notelement;
-    sub @WrdBrk i' s' s' u' b' s' e' t' @WrdBrk by reflexsubset;
-    sub @WrdBrk i' s' s' u' p' e' r' s' e' t' @WrdBrk by reflexsuperset;
-    sub @WrdBrk i' n' t' e' r' s' e' c' t' i' o' n' @WrdBrk by intersection;
-    sub @WrdBrk u' n' i' o' n' @WrdBrk by union;
-    sub @WrdBrk s' u' m' @WrdBrk by summation;
-    sub @WrdBrk p' r' o' d' @WrdBrk by product;
-    sub @WrdBrk p' i' @WrdBrk by pi;
-} context_sub;
+# === functions ===
+# sub words surrounded by @punct
+lookup inLine_sub {
+    sub @set_containers @punct i' n' @punct by element;
+    sub @punct i' n' @punct @set_containers by element;
+    sub @punct n' o' t' space' i' n' @punct by notelement;
+    sub @punct i' s' s' u' b' s' e' t' @punct by reflexsubset;
+    sub @punct i' s' s' u' p' e' r' s' e' t' @punct by reflexsuperset;
+    sub @punct i' n' t' e' r' s' e' c' t' i' o' n' @punct by intersection;
+    sub @punct u' n' i' o' n' @punct by union;
+    sub @punct p' r' o' d' @punct by product;
+	sub @punct s' q' r' t' @punct by radical;
 
-# lookup rules without using apostrophe
-lookup noContext_sub {
-    # '**0'..'**9' -> superscript digits
-    sub asterisk asterisk zero by uni2070;
-    sub asterisk asterisk one by uni00B9;
-    sub asterisk asterisk two by uni00B2;
-    sub asterisk asterisk three by uni00B3;
-    sub asterisk asterisk four by uni2074;
-    sub asterisk asterisk five by uni2075;
-    sub asterisk asterisk six by uni2076;
-    sub asterisk asterisk seven by uni2077;
-    sub asterisk asterisk eight by uni2078;
-    sub asterisk asterisk nine by uni2079;
-} noContext_sub;
+} inLine_sub;
 
-# Reuse both lookups from the features
+# sub words at start of line or surrounded by @punct
+lookup startLine_sub {
+	ignore sub @any_char i' n' f';  # any character on the left means not at start of line
+	sub i' n' f' @punct by infinity;
+
+	ignore sub @any_char s' u' m';
+	sub s' u' m' @punct by summation;
+
+	ignore sub @any_char s' e' t';
+	sub s' e' t' @punct by emptyset;
+
+	ignore sub @any_char s' i' n' c' e';
+	sub s' i' n' c' e' @punct by uni2235;
+
+	ignore sub @any_char b' e' c' a' u' s' e';
+	sub b' e' c' a' u' s' e' @punct by uni2235;
+
+	ignore sub @any_char t' h' e' r' e' f' o' r' e';
+	sub t' h' e' r' e' f' o' r' e' @punct by therefore;
+	
+	# === math greek letters ===
+	ignore sub @any_char a' l' p' h' a';
+	sub a' l' p' h' a' @punct by uni237A;
+
+	ignore sub @any_char b' e' t' a';
+	sub b' e' t' a' @punct by beta;
+
+	ignore sub @any_char g' a' m' m' a';
+	sub g' a' m' m' a' @punct by gamma;
+
+	ignore sub @any_char d' e' l' t' a';
+	sub d' e' l' t' a' @punct by uni0394;
+
+	ignore sub @any_char e' p' s' i' l' o' n';
+	sub e' p' s' i' l' o' n' @punct by epsilon;
+
+	ignore sub @any_char z' e' t' a';
+	sub z' e' t' a' @punct by zeta;
+
+	ignore sub @any_char t' h' e' t' a';
+	sub t' h' e' t' a' @punct by theta;
+
+	ignore sub @any_char l' a' m' b' d' a';
+	sub l' a' m' b' d' a' @punct by lambda;
+
+	ignore sub @any_char m' u';
+	sub m' u' @punct by uni03BC;
+
+	ignore sub @any_char p' i';
+	sub p' i' @punct by pi;
+
+	ignore sub @any_char r' h' o';
+	sub r' h' o' @punct by uni2374;
+
+	ignore sub @any_char s' i' g' m' a';
+	sub s' i' g' m' a' @punct by sigma;
+
+	ignore sub @any_char t' a' u';
+	sub t' a' u' @punct by tau;
+
+	ignore sub @any_char p' h' i';
+	sub p' h' i' @punct by uni03D5;
+
+	ignore sub @any_char o' m' e' g' a';
+	sub o' m' e' g' a' @punct by uni2375;
+
+} startLine_sub;
+
+# sub expnents to superscript (sup)
+lookup power_sub {
+	sub asterisk' asterisk' zero' by uni2070;
+	sub asterisk' asterisk' one' by uni00B9;
+	sub asterisk' asterisk' two' by uni00B2;
+	sub asterisk' asterisk' three' by uni00B3;
+	sub asterisk' asterisk' four' by uni2074;
+	sub asterisk' asterisk' five' by uni2075;
+	sub asterisk' asterisk' six' by uni2076;
+	sub asterisk' asterisk' seven' by uni2077;
+	sub asterisk' asterisk' eight' by uni2078;
+	sub asterisk' asterisk' nine' by uni2079;
+	sub asterisk' asterisk' period' by periodcentered;
+
+	# after a superscript digit, keep turning further digits into superscript
+	sub @dec_sup @dec' by @dec_sup;
+
+} power_sub;
+
+# === main ===
+# variants for various IDEs
 feature calt {
-    lookup context_sub;
-    lookup noContext_sub;
+    lookup inLine_sub;
+	lookup startLine_sub;
+	lookup power_sub;
 } calt;
 
 feature liga {
-    lookup context_sub;
-    lookup noContext_sub;
+    lookup inLine_sub;
+	lookup startLine_sub;
+	lookup power_sub;
 } liga;
 
 feature clig {
-    lookup context_sub;
-    lookup noContext_sub;
+    lookup inLine_sub;
+	lookup startLine_sub;
+	lookup power_sub;
 } clig;
 
 feature dlig {
-    lookup context_sub;
-    lookup noContext_sub;
+    lookup inLine_sub;
+	lookup startLine_sub;
+	lookup power_sub;
 } dlig;
 
 feature rlig {
-    lookup context_sub;
-    lookup noContext_sub;
+    lookup inLine_sub;
+	lookup startLine_sub;
+	lookup power_sub;
 } rlig;
 
-# test cases:
+# All features (remove hashtags):
 
-# a inb
-# a not inb
-# a issubsetb
-# a issupersetb
-# a intersectionb
-# a unionb
-# a sumb
-# a prodb
-# a pib
+# '' in b
+# "" in b
+# [] in b
+# () in b
+# {} in b
+# a in ''
+# a in ""
+# a in []
+# a in ()
+# a in {}
 
-# a in b
 # a not in b
-# a issubset b
-# a issuperset b
-# a intersection b
-# a union b
-# a sum b
-# a prod b
-# a pi b
-
-# ain b
-# anot in b
-# aissubset b
-# aissuperset b
-# aintersection b
-# aunion b
-# asum b
-# aprod b
-# api b
-
-# math.prod.
-# math.pi.
-# numpy.prod.
-# numpy.pi.
+# a.issubset(b)
+# a.issuperset(b)
+# a.intersection(b)
+# a.union(b)
+# a.prod(b)
+# a.sqrt(b)
+# sum(b)
 
 # 1**0
 # 1**1
@@ -105,4 +179,25 @@ feature rlig {
 # 1**7
 # 1**8
 # 1**9
-# 1**10
+# 1**314
+# 1**3.14
+
+# inf b
+# since b
+# because b
+# therefore b
+# alpha b
+# beta b
+# gamma b
+# delta b
+# epsilon b
+# zeta b
+# theta b
+# lambda b
+# mu b
+# pi b
+# rho b
+# sigma b
+# tau b
+# phi b
+# omega b
