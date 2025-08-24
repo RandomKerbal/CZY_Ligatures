@@ -36,8 +36,8 @@ lookup startLine_sub {
 	ignore sub @any_char s' u' m';
 	sub s' u' m' @punct by summation;
 
-	ignore sub @any_char s' e' t';
-	sub s' e' t' @punct by emptyset;
+	ignore sub @any_char s' e' t' parenleft' parenright';
+	sub s' e' t' parenleft' parenright' by emptyset;
 
 	ignore sub @any_char s' i' n' c' e';
 	sub s' i' n' c' e' @punct by uni2235;
@@ -161,13 +161,14 @@ feature rlig {
 # a in {}
 
 # a not in b
-# a.issubset(b)
-# a.issuperset(b)
-# a.intersection(b)
-# a.union(b)
-# a.prod(b)
-# a.sqrt(b)
-# sum(b)
+# a.issubset()
+# a.issuperset()
+# a.intersection()
+# a.union()
+# a.prod()
+# a.sqrt()
+# sum()
+# set()
 
 # 1**0
 # 1**1
