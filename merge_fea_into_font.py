@@ -8,7 +8,6 @@ What it does:
     - Prints a short report of glyph names referenced in the .fea that are missing from the font (you may need to import those glyphs from a math font).
 """
 import re
-import sys
 from fontTools import ttLib
 from fontTools.feaLib.builder import addOpenTypeFeatures
 
@@ -62,12 +61,7 @@ def main():
     print("Glyphs referenced in .fea:")
     print(" ", ", ".join(target_glyphs))
 
-    # load font
-    try:
-        font = ttLib.TTFont(font_path)
-    except Exception as e:
-        print(f"ERROR: could not open font '{font_path}': {e}", file=sys.stderr)
-        sys.exit(2)
+    font = ttLib.TTFont(font_path)
 
     # build a set of glyphs present in the font
     glyphset = set(font.getGlyphOrder())
@@ -81,8 +75,8 @@ def main():
     try:
         addOpenTypeFeatures(font, fea_path)
     except Exception as e:
-        print(f"\nERROR: failed to add OpenType features: {e}", file=sys.stderr)
-        sys.exit(3)
+        print(f"\nERROR: failed to add OpenType features: {e}")
+        exit()
 
     # set new internal names
     try:
@@ -101,8 +95,8 @@ def main():
         font.save(out_path)
         print(f"\nSUCCESS: Merged font saved to: {out_path}")
     except Exception as e:
-        print(f"ERROR: Failed to save font: {e}", file=sys.stderr)
-        sys.exit(4)
+        print(f"ERROR: Failed to save font: {e}")
+        exit()
 
 
 if __name__ == '__main__':

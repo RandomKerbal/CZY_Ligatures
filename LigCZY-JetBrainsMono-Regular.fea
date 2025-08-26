@@ -1,4 +1,5 @@
 # === classes ===
+@letters      = [a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
 @digits       = [zero one two three four five six seven eight nine];
 @digits_sup	  = [uni2070 uni00B9 uni00B2 uni00B3 uni2074 uni2075 uni2076 uni2077 uni2078 uni2079];
 @dec          = [@digits period];
@@ -10,10 +11,36 @@
                  braceleft bar braceright asciitilde tilde];
 @set_containers = [quotesingle quotedbl bracketleft bracketright parenleft parenright braceleft braceright];
 				 
-@any_char = [@digits @digits_sup a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
+@any_char = [@letters @digits @digits_sup];
 
 # === functions ===
-# sub words surrounded by @punct
+# sub exponents to superscript (sup)
+lookup power_sub {
+	sub asterisk' asterisk' zero' by uni2070;
+	sub asterisk' asterisk' one' by uni00B9;
+	sub asterisk' asterisk' two' by uni00B2;
+	sub asterisk' asterisk' three' by uni00B3;
+	sub asterisk' asterisk' four' by uni2074;
+	sub asterisk' asterisk' five' by uni2075;
+	sub asterisk' asterisk' six' by uni2076;
+	sub asterisk' asterisk' seven' by uni2077;
+	sub asterisk' asterisk' eight' by uni2078;
+	sub asterisk' asterisk' nine' by uni2079;
+	sub asterisk' asterisk' period' by periodcentered;
+
+	# after a superscript digit, keep turning further digits into superscript
+	sub @dec_sup @dec' by @dec_sup;
+
+} power_sub;
+
+# sub words by multiple words
+lookup sub_by_multi {
+	# === lambda function ===
+	sub l' a m b d a space by d e f space lambda colon;
+	sub d e f space lambda colon a' m' b' d' a' space' by space;
+} sub_by_multi;
+
+# sub words inside lines
 lookup inLine_sub {
     sub @set_containers @punct i' n' @punct by element;
     sub @punct i' n' @punct @set_containers by element;
@@ -24,10 +51,11 @@ lookup inLine_sub {
     sub @punct u' n' i' o' n' @punct by union;
     sub @punct p' r' o' d' @punct by product;
 	sub @punct s' q' r' t' @punct by radical;
+	sub @any_char asciicircum' @any_char by circleplus;
 
 } inLine_sub;
 
-# sub words at start of line or surrounded by @punct
+# sub words at start of line
 lookup startLine_sub {
 	ignore sub @any_char i' n' f';  # any character on the left means not at start of line
 	sub i' n' f' @punct by infinity;
@@ -69,9 +97,6 @@ lookup startLine_sub {
 	ignore sub @any_char t' h' e' t' a';
 	sub t' h' e' t' a' @punct by theta;
 
-	ignore sub @any_char l' a' m' b' d' a';
-	sub l' a' m' b' d' a' @punct by lambda;
-
 	ignore sub @any_char m' u';
 	sub m' u' @punct by uni03BC;
 
@@ -95,31 +120,20 @@ lookup startLine_sub {
 
 } startLine_sub;
 
-# sub expnents to superscript (sup)
-lookup power_sub {
-	sub asterisk' asterisk' zero' by uni2070;
-	sub asterisk' asterisk' one' by uni00B9;
-	sub asterisk' asterisk' two' by uni00B2;
-	sub asterisk' asterisk' three' by uni00B3;
-	sub asterisk' asterisk' four' by uni2074;
-	sub asterisk' asterisk' five' by uni2075;
-	sub asterisk' asterisk' six' by uni2076;
-	sub asterisk' asterisk' seven' by uni2077;
-	sub asterisk' asterisk' eight' by uni2078;
-	sub asterisk' asterisk' nine' by uni2079;
-	sub asterisk' asterisk' period' by periodcentered;
-
-	# after a superscript digit, keep turning further digits into superscript
-	sub @dec_sup @dec' by @dec_sup;
-
-} power_sub;
-
 # === main ===
 feature calt {
+	lookup power_sub;
+	lookup sub_by_multi;
     lookup inLine_sub;
 	lookup startLine_sub;
-	lookup power_sub;
 } calt;
+
+feature liga {
+	lookup power_sub;
+	lookup sub_by_multi;
+    lookup inLine_sub;
+	lookup startLine_sub;
+} liga;
 
 # All features (remove hashtags):
 
@@ -143,6 +157,7 @@ feature calt {
 # a.sqrt()
 # sum()
 # set()
+# lambda a, b : a*b
 
 # 1**0
 # 1**1
@@ -156,6 +171,7 @@ feature calt {
 # 1**9
 # 1**314
 # 1**3.14
+# a^b
 
 # inf b
 # since b
@@ -168,7 +184,6 @@ feature calt {
 # epsilon b
 # zeta b
 # theta b
-# lambda b
 # mu b
 # pi b
 # rho b
