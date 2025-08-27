@@ -1,17 +1,13 @@
 # === classes ===
-@letters      = [a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
-@digits       = [zero one two three four five six seven eight nine];
-@digits_sup	  = [uni2070 uni00B9 uni00B2 uni00B3 uni2074 uni2075 uni2076 uni2077 uni2078 uni2079];
-@dec          = [@digits period];
-@dec_sup      = [@digits_sup periodcentered];
-@punct        = [space exclam quotedbl numbersign dollar percent ampersand quotesingle
-                 parenleft parenright asterisk plus comma hyphen period slash
-                 colon semicolon less equal greater question at
-                 bracketleft backslash bracketright asciicircum grave
-                 braceleft bar braceright asciitilde tilde];
-@set_containers = [quotesingle quotedbl bracketleft bracketright parenleft parenright braceleft braceright];
-				 
-@any_char = [@letters @digits @digits_sup];
+@letters        = [a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
+@digits         = [zero one two three four five six seven eight nine];
+@digits_sup	    = [uni2070 uni00B9 uni00B2 uni00B3 uni2074 uni2075 uni2076 uni2077 uni2078 uni2079];
+@dec            = [@digits period];
+@dec_sup        = [@digits_sup periodcentered];
+@punct          = [space period colon comma semicolon quotesingle quotedbl question exclam at numbersign dollar percent asciitilde asciicircum ampersand
+                   asterisk hyphen plus slash backslash less equal greater parenleft parenright bracketleft bracketright braceleft braceright bar grave];
+@set_containers = [quotesingle quotedbl parenleft parenright bracketleft bracketright braceleft braceright];		 
+@any_char       = [@letters @digits @digits_sup];
 
 # === functions ===
 # sub exponents to superscript (sup)
@@ -36,8 +32,8 @@ lookup power_sub {
 # sub words by multiple words
 lookup sub_by_multi {
 	# === lambda function ===
-	sub l' a m b d a space by d e f space lambda colon;
-	sub d e f space lambda colon a' m' b' d' a' space' by space;
+	sub l' a m b d a space by d e f space lambda;
+	sub d e f space lambda a' m' b' d' a' space by colon;
 } sub_by_multi;
 
 # sub words inside lines
@@ -128,15 +124,7 @@ feature calt {
 	lookup startLine_sub;
 } calt;
 
-feature liga {
-	lookup power_sub;
-	lookup sub_by_multi;
-    lookup inLine_sub;
-	lookup startLine_sub;
-} liga;
-
-# All features (remove hashtags):
-
+# === All Features (remove hashtags first) ===
 # '' in b
 # "" in b
 # [] in b
