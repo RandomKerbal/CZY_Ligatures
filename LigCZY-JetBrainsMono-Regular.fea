@@ -29,13 +29,6 @@ lookup power_sub {
 
 } power_sub;
 
-# sub words by multiple words
-lookup sub_by_multi {
-	# === lambda function ===
-	sub l' a m b d a space by d e f space lambda;
-	sub d e f space lambda a' m' b' d' a' space by colon;
-} sub_by_multi;
-
 # sub words inside lines
 lookup inLine_sub {
     sub @set_containers @punct i' n' @punct by element;
@@ -70,7 +63,12 @@ lookup startLine_sub {
 
 	ignore sub @any_char t' h' e' r' e' f' o' r' e';
 	sub t' h' e' r' e' f' o' r' e' @punct by therefore;
-	
+
+	# === lambda function ===
+	ignore sub @any_char l' a m b d a space;
+	sub l' a m b d a space by d e f space lambda;
+	sub d e f space lambda a' m' b' d' a' space by colon;
+
 	# === math greek letters ===
 	ignore sub @any_char a' l' p' h' a';
 	sub a' l' p' h' a' @punct by uni237A;
@@ -119,7 +117,6 @@ lookup startLine_sub {
 # === main ===
 feature calt {
 	lookup power_sub;
-	lookup sub_by_multi;
     lookup inLine_sub;
 	lookup startLine_sub;
 } calt;
