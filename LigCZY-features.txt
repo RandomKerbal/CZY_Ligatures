@@ -1,5 +1,5 @@
 === General Rules ===
-Using "sum" as example,
+Using "sum" as example:
 sum ＼	show
 sum_＼	show
 sumx＼	hide
@@ -117,7 +117,7 @@ no. 1
 No. 1
 
 === Bugged ===
-Currently only in comment/string as these rules consist of more than 1 token (color).
+Currently only in comment/string as these rules consist of more than 1 token (color):
 set()
 not in
 1**0
