@@ -49,10 +49,13 @@ def rename_font_name_table(font, new_family, new_subfamily, new_fullname, new_ps
 
 
 def main():
-    family = "LigCZY"
-    font_path = "./JetBrainsMono-Regular.ttf"
-    fea_path = f"./{family}-JetBrainsMono-Regular.fea"
-    out_path = f"./{family}-JetBrainsMono-Regular.ttf"
+    in_name = "JetBrainsMono"
+    out_name = "LigCZY"
+    subfamily = "Regular"
+
+    in_path = f"./{in_name}-{subfamily}.ttf"
+    fea_path = f"./{out_name}-{in_name}.v2.fea"
+    out_path = f"./{out_name}-{in_name}-{subfamily}.ttf"
 
     with open(fea_path, "r", encoding="utf-8") as fh:
         fea_text = fh.read()
@@ -61,7 +64,7 @@ def main():
     print("Glyphs referenced in .fea:")
     print(" ", ", ".join(target_glyphs))
 
-    font = ttLib.TTFont(font_path)
+    font = ttLib.TTFont(in_path)
 
     # build a set of glyphs present in the font
     glyphset = set(font.getGlyphOrder())
@@ -81,12 +84,11 @@ def main():
     # set new internal names
     try:
         # build new full and postscript names
-        subfamily = "Regular"
-        fullname = f"{family} {subfamily}"
+        fullname = f"{out_name} {subfamily}"
         psname = re.sub(r'\s+', '', fullname)  # PostScript name must be ASCII and no spaces
 
-        print(f"Internal name table renamed to: family='{family}', full='{fullname}', ps='{psname}'")
-        rename_font_name_table(font, family, subfamily, fullname, psname)
+        print(f"Internal name table renamed to: out_name='{out_name}', full='{fullname}', ps='{psname}'")
+        rename_font_name_table(font, out_name, subfamily, fullname, psname)
     except Exception as e:
         print(f"Warning: failed to rename name table: {e}")
 
