@@ -36,7 +36,17 @@ lookup main {
 	sub @char asciicircum' @char by circleplus;
 	sub @char space asciicircum' space @char by circleplus;
 
-	ignore sub @char e' x p;
+	ignore sub @char c' b r t;
+	ignore sub c' b r t @char;
+	sub c' b r t by uni00B3;
+	sub uni00B3 b' r' t' by radical;
+
+	ignore sub @char e' x p two;
+	ignore sub e' x p two @char;
+	sub e' x p two by two asterisk;
+	sub two asterisk x' p' two' by asterisk;
+
+	# "ignore sub @char e' x p" already in exp2;
 	ignore sub e' x p @char;
 	sub e' x p by e asterisk;
 	sub e asterisk x' p' by asterisk;
@@ -44,6 +54,15 @@ lookup main {
 	ignore sub @char i' s' c' l' o' s' e';
 	ignore sub i' s' c' l' o' s' e' @char;
 	sub i' s' c' l' o' s' e' by approxequal;
+
+	ignore sub @char l o g one' zero;
+	ignore sub l o g one' zero @char;
+	sub l o g one' zero by uni2081;
+	sub l o g uni2081 zero' by uni2080;
+
+	ignore sub @char l o g two';
+	ignore sub l o g two' @char;
+	sub l o g two' by uni2082;
 
 	ignore sub @char p' r' o' d';
 	ignore sub p' r' o' d' @char;
@@ -75,7 +94,7 @@ lookup main {
 	sub l' a' m' b' d' a' @punct by lambda;
 
 	# === lambda function ===
-	# put behind lambda symbols so only "space l a m b d a space" remains
+	# put behind lambda symbol so only "space l a m b d a space" remains
 	sub l' a m b d a by d e f space lambda;
 	sub d e f space lambda a' m' b' d' a' by colon;	
 
@@ -169,12 +188,12 @@ lookup main {
 	sub [n N]' o' period' space @digits by uni2116;
 
 	# === in not in ===
-	# put behind comment/string to prevent inf symbol from ignore
+	# put behind comment/string to prevent ignoring inf
     sub @set_containers space i' n' space by element;
     sub space i' n' space @set_containers by element;
 	sub underscore i' n' underscore by element;
 
-	# put behind to prevent @set_containers and "_in_" from ignore
+	# put behind to prevent ignoring @set_containers and "_in_"
 	ignore sub @char_sep i' n';
 	ignore sub i' n' @char_sep;
 	sub i' n' by element;

@@ -64,8 +64,12 @@ xlambdax＼	hide
 === Features using General Rules ===
 a^b
 a ^ b
+cbrt()
 isclose()
+exp2()
 exp()
+log10()
+log2()
 prod()
 sqrt()
 sum()
