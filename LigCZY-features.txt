@@ -1,0 +1,132 @@
+=== General Rules ===
+Using "sum" as example,
+sum ＼	show
+sum_＼	show
+sumx＼	hide
+
+ sum ＼  show
+ sum_＼  show
+ sumx＼  hide
+
+_sum ＼	show
+_sum_＼	show
+_sumx＼	hide
+
+xsum ＼	hide
+xsum_＼	hide
+xsumx＼	hide
+
+=== Special "lambda" Rules ===
+lambda ＼	show as function
+lambda_＼	show as symbol
+lambdax＼	hide
+
+ lambda ＼	show as function
+ lambda_＼	show as symbol
+ lambdax＼	hide
+
+_lambda ＼	show as symbol
+_lambda_＼	show as symbol
+_lambdax＼	hide
+
+xlambda ＼	hide
+xlambda_＼	hide
+xlambdax＼	hide
+
+=== Special "in" as Non-Keyword Rules ===
+#in ＼  hide
+#in_＼  hide
+#inx＼  hide
+
+# in ＼  hide
+# in_＼  hide
+# inx＼  hide
+
+#_in ＼	hide
+#_in_＼	show
+#_inx＼	hide
+
+#xin ＼	hide
+#xin_＼	hide
+#xinx＼	hide
+
+#' in ＼	show
+#" in ＼	show
+#] in ＼	show
+#) in ＼	show
+#} in ＼	show
+# in '＼	show
+# in "＼	show
+# in [＼	show
+# in (＼	show
+# in {＼	show
+
+=== Features using General Rules ===
+a^b
+a ^ b
+isclose()
+exp()
+prod()
+sqrt()
+sum()
+
+a.issubset()
+a.issuperset()
+a.intersection()
+a.union()
+a.difference()
+a.symmetric_difference()
+
+alpha
+beta
+gamma
+delta
+epsilon
+zeta
+theta
+mu
+pi
+rho
+sigma
+tau
+phi
+omega
+
+inf
+\n
+fixme
+FIXME
+todo
+TODO
+dx
+dy
+dz
+because
+Because
+since
+Since
+therefore
+Therefore
+no.1
+No.1
+no. 1
+No. 1
+
+=== Bugged ===
+Currently only in comment/string as these rules consist of more than 1 token (color).
+set()
+not in
+1**0
+1**1
+1**2
+1**3
+1**4
+1**5
+1**6
+1**7
+1**8
+1**9
+1**314
+1**3.14
+1^1
+1 ^ 1

@@ -1,13 +1,13 @@
 # === classes ===
-@letters        = [a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z];
+@letters        = [a b c d e f g h i j k l m n o p q r s t u v w x y z ae oe A B C D E F G H I J K L M N O P Q R S T U V W X Y Z AE OE alpha beta gamma delta epsilon zeta eta theta iota kappa lambda uni03BC nu xi omicron pi rho sigma uni03C2 tau upsilon phi chi psi omega Alpha Beta Gamma uni0394 Epsilon Zeta Eta Theta Iota Kappa Lambda Mu Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Psi uni03A9];  # unicodes: final sigma, Delta, Omega
 @digits         = [zero one two three four five six seven eight nine];
 @digits_sup	    = [uni2070 uni00B9 uni00B2 uni00B3 uni2074 uni2075 uni2076 uni2077 uni2078 uni2079];
 @dec            = [@digits period];
 @dec_sup        = [@digits_sup periodcentered];
 @punct          = [space period colon comma semicolon quotesingle quotedbl question exclam at numbersign dollar percent asciitilde asciicircum ampersand
                    asterisk hyphen plus slash backslash less equal greater parenleft parenright bracketleft bracketright braceleft braceright bar grave];
-@set_containers = [quotesingle quotedbl parenleft parenright bracketleft bracketright braceleft braceright];		 
-@any_char       = [@letters @digits @digits_sup];
+@set_containers = [quotesingle quotedbl parenleft parenright bracketleft bracketright braceleft braceright];
+@char           = [@letters @digits @digits_sup];
 
 # === functions ===
 # sub exponents to superscript (sup)
@@ -29,87 +29,89 @@ lookup power_sub {
 
 } power_sub;
 
-# sub words inside lines
+# sub words inside line
 lookup inLine_sub {
-    sub @set_containers @punct i' n' @punct by element;
-    sub @punct i' n' @punct @set_containers by element;
+	sub @char asciicircum' @char by circleplus;
+    sub @set_containers space i' n' space by element;
+    sub space i' n' space @set_containers by element;
     sub @punct n' o' t' space' i' n' @punct by notelement;
     sub @punct i' s' s' u' b' s' e' t' @punct by reflexsubset;
     sub @punct i' s' s' u' p' e' r' s' e' t' @punct by reflexsuperset;
     sub @punct i' n' t' e' r' s' e' c' t' i' o' n' @punct by intersection;
     sub @punct u' n' i' o' n' @punct by union;
-    sub @punct p' r' o' d' @punct by product;
-	sub @punct s' q' r' t' @punct by radical;
-	sub @any_char asciicircum' @any_char by circleplus;
 
 } inLine_sub;
 
 # sub words at start of line
 lookup startLine_sub {
-	ignore sub @any_char i' n' f';  # any character on the left means not at start of line
+
+    sub @punct p' r' o' d' @punct by product;
+	sub @punct s' q' r' t' @punct by radical;
+
+	ignore sub @char i' n' f';  # any character on the left means not at start of line
 	sub i' n' f' @punct by infinity;
 
-	ignore sub @any_char s' u' m';
+	ignore sub @char s' u' m';
 	sub s' u' m' @punct by summation;
 
-	ignore sub @any_char s' e' t' parenleft' parenright';
+	ignore sub @char s' e' t' parenleft' parenright';
 	sub s' e' t' parenleft' parenright' by emptyset;
 
-	ignore sub @any_char s' i' n' c' e';
+	ignore sub @char s' i' n' c' e';
 	sub s' i' n' c' e' @punct by uni2235;
 
-	ignore sub @any_char b' e' c' a' u' s' e';
+	ignore sub @char b' e' c' a' u' s' e';
 	sub b' e' c' a' u' s' e' @punct by uni2235;
 
-	ignore sub @any_char t' h' e' r' e' f' o' r' e';
+	ignore sub @char t' h' e' r' e' f' o' r' e';
 	sub t' h' e' r' e' f' o' r' e' @punct by therefore;
 
 	# === lambda function ===
-	ignore sub @any_char l' a m b d a space;
+	ignore sub @char l' a m b d a space;
 	sub l' a m b d a space by d e f space lambda;
 	sub d e f space lambda a' m' b' d' a' space by colon;
 
 	# === math greek letters ===
-	ignore sub @any_char a' l' p' h' a';
+	ignore sub @char a' l' p' h' a';
 	sub a' l' p' h' a' @punct by uni237A;
 
-	ignore sub @any_char b' e' t' a';
+	ignore sub @char b' e' t' a';
 	sub b' e' t' a' @punct by beta;
 
-	ignore sub @any_char g' a' m' m' a';
+	ignore sub @char g' a' m' m' a';
 	sub g' a' m' m' a' @punct by gamma;
 
-	ignore sub @any_char d' e' l' t' a';
+	ignore sub @char d' e' l' t' a';
 	sub d' e' l' t' a' @punct by uni0394;
 
-	ignore sub @any_char e' p' s' i' l' o' n';
+	ignore sub @char e' p' s' i' l' o' n';
 	sub e' p' s' i' l' o' n' @punct by epsilon;
 
-	ignore sub @any_char z' e' t' a';
+	ignore sub @char z' e' t' a';
 	sub z' e' t' a' @punct by zeta;
 
-	ignore sub @any_char t' h' e' t' a';
+	ignore sub @char t' h' e' t' a';
 	sub t' h' e' t' a' @punct by theta;
 
-	ignore sub @any_char m' u';
+	ignore sub @char m' u';
 	sub m' u' @punct by uni03BC;
 
-	ignore sub @any_char p' i';
+	ignore sub @char p' i';
 	sub p' i' @punct by pi;
 
-	ignore sub @any_char r' h' o';
+	ignore sub @char r' h' o';
 	sub r' h' o' @punct by uni2374;
 
-	ignore sub @any_char s' i' g' m' a';
+	ignore sub @char s' i' g' m' a';
 	sub s' i' g' m' a' @punct by sigma;
 
-	ignore sub @any_char t' a' u';
+	ignore sub @char t' a' u';
 	sub t' a' u' @punct by tau;
 
-	ignore sub @any_char p' h' i';
+	ignore sub @char p' h' i';
 	sub p' h' i' @punct by uni03D5;
 
-	ignore sub @any_char o' m' e' g' a';
+	ignore sub @char o' m' e' g' a';
 	sub o' m' e' g' a' @punct by uni2375;
 
 } startLine_sub;
@@ -120,59 +122,3 @@ feature calt {
     lookup inLine_sub;
 	lookup startLine_sub;
 } calt;
-
-# === All Features (remove hashtags first) ===
-# '' in b
-# "" in b
-# [] in b
-# () in b
-# {} in b
-# a in ''
-# a in ""
-# a in []
-# a in ()
-# a in {}
-
-# a not in b
-# a.issubset()
-# a.issuperset()
-# a.intersection()
-# a.union()
-# a.prod()
-# a.sqrt()
-# sum()
-# set()
-# lambda a, b : a*b
-
-# 1**0
-# 1**1
-# 1**2
-# 1**3
-# 1**4
-# 1**5
-# 1**6
-# 1**7
-# 1**8
-# 1**9
-# 1**314
-# 1**3.14
-# a^b
-
-# inf b
-# since b
-# because b
-# therefore b
-# alpha b
-# beta b
-# gamma b
-# delta b
-# epsilon b
-# zeta b
-# theta b
-# mu b
-# pi b
-# rho b
-# sigma b
-# tau b
-# phi b
-# omega b
