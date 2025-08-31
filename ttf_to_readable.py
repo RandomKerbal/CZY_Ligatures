@@ -5,7 +5,7 @@ def ttf_to_readable(ttf_path, output_path=None):
     try:
         font = TTFont(ttf_path)
 
-        # Save in TTX (XML) format for readability
+        # save in TTX (XML) format for readability
         font.saveXML(output_path)
         print(f"Readable font data saved in: {output_path}")
 
