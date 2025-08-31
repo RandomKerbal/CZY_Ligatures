@@ -84,8 +84,8 @@ lookup main {
     sub @punct i' s' s' u' p' e' r' s' e' t' @punct by reflexsuperset;
     sub @punct i' n' t' e' r' s' e' c' t' i' o' n' @punct by intersection;
     sub @punct u' n' i' o' n' @punct by union;
-	sub @punct d' i' f' f' e' r' e' n' c' e' by emdash;
 	sub @punct s' y' m' m' e' t' r' i' c' underscore' d' i' f' f' e' r' e' n' c' e' @punct by circleplus;
+	sub @punct d' i' f' f' e' r' e' n' c' e' @punct by emdash;
 
 	# === lambda symbol ====
 	ignore sub @char l' a' m' b' d' a';
