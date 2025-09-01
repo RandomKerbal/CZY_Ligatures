@@ -6,16 +6,13 @@ from fontTools.ttLib import TTFont
 
 font_path = "./JetBrainsMono-Regular.ttf"  # replace with your font file
 
-# load the font
 font = TTFont(font_path)
-# get the glyph names from the 'glyf' table
-glyph_names = font.getGlyphOrder()
 
 # get Unicode mappings
 cmap = font['cmap'].getBestCmap()  # maps codepoint -> glyph name
 
 print("All glyphs in the font:\n")
-for glyph_name in glyph_names:
+for glyph_name in font.getGlyphOrder():
     # find the Unicode character if it exists
     char = None
     for codepoint, _glyph_name in cmap.items():
