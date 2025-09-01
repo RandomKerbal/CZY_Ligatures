@@ -53,8 +53,7 @@ def rename_name_table(font, new_family, new_subfamily, new_fullname, new_psname)
 
 def main():
     in_path = f"./{family1}-{subfamily}.ttf"
-    # fea_path = f"./{family2}-{family1}.v2.fea"
-    fea_path = f"./test.fea"
+    fea_path = f"./{family2}-{family1}.v2.fea"
     out_path = f"./{family2}-{family1}.ttf"
 
     with open(fea_path, "r", encoding="utf-8") as fh:

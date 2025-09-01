@@ -1,5 +1,5 @@
 from fontTools.ttLib import TTFont
-from merge_fea_into_font import family1, family2
+from merge_fea_into_font import family2, family1
 
 
 def ttf_to_readable(ttf_path, output_path=None):
