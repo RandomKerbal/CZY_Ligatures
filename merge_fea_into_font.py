@@ -11,15 +11,18 @@ import re
 from fontTools import ttLib
 from fontTools.feaLib.builder import addOpenTypeFeatures
 
+family1 = "JetBrainsMono"  # family of original font
+family2 = "LigCZY"  # family of modified font, usually author's name
+subfamily = "Regular"
 FEA_GLYPH_RE = re.compile(r"by\s+([A-Za-z0-9_]+)\s*;")
 
 
-def extract_target_glyphs_from_fea(fea_text):
+def get_glyphs_from_fea(fea_text):
     """Return a sorted set of glyph names referenced by 'by <glyph>' in the .fea"""
     return sorted(set(FEA_GLYPH_RE.findall(fea_text)))
 
 
-def rename_font_name_table(font, new_family, new_subfamily, new_fullname, new_psname):
+def rename_name_table(font, new_family, new_subfamily, new_fullname, new_psname):
     """
     Update the font's 'name' table to set Family (1), Subfamily (2), Unique ID (3),
     Full name (4), and PostScript name (6) for common platforms.
@@ -49,26 +52,18 @@ def rename_font_name_table(font, new_family, new_subfamily, new_fullname, new_ps
 
 
 def main():
-    in_name = "JetBrainsMono"
-    out_name = "LigCZY"
-    subfamily = "Regular"
-
-    in_path = f"./{in_name}-{subfamily}.ttf"
-    fea_path = f"./{out_name}-{in_name}.v2.fea"
-    out_path = f"./{out_name}-{in_name}.ttf"
+    in_path = f"./{family1}-{subfamily}.ttf"
+    fea_path = f"./{family2}-{family1}.v2.fea"
+    out_path = f"./{family2}-{family1}.ttf"
 
     with open(fea_path, "r", encoding="utf-8") as fh:
         fea_text = fh.read()
 
-    target_glyphs = extract_target_glyphs_from_fea(fea_text)
-    print("Glyphs referenced in .fea:")
-    print(" ", ", ".join(target_glyphs))
-
     font = ttLib.TTFont(in_path)
 
-    # build a set of glyphs present in the font
-    glyphset = set(font.getGlyphOrder())
-    missing = [g for g in target_glyphs if g not in glyphset]
+    fea_glyphs = get_glyphs_from_fea(fea_text)
+    font_glyphs = set(font.getGlyphOrder())
+    missing = [g for g in fea_glyphs if g not in font_glyphs]
     if missing:
         print("\nWARNING: The following glyphs referenced by the .fea are missing from the font:")
         for g in missing:
@@ -84,10 +79,10 @@ def main():
     # set new internal names
     try:
         # build new full and postscript names (NO spaces)
-        fullname = f"{out_name}-{in_name}"
+        family = f"{family2}-{family1}"
 
-        print(f"Internal name table renamed to: out_name='{out_name}', full='{fullname}', ps='{fullname}'")
-        rename_font_name_table(font, out_name, subfamily, fullname, fullname)
+        print(f"Internal name table renamed to: {family}")
+        rename_name_table(font, family, subfamily, family, family)
     except Exception as e:
         print(f"Warning: failed to rename name table: {e}")
 

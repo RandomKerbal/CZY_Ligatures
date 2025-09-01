@@ -1,4 +1,5 @@
 from fontTools.ttLib import TTFont
+from merge_fea_into_font import family1, family2
 
 
 def ttf_to_readable(ttf_path, output_path=None):
@@ -14,6 +15,6 @@ def ttf_to_readable(ttf_path, output_path=None):
 
 
 if __name__ == "__main__":
-    ttf_file = "./LigCZY-JetBrainsMono-Regular.ttf"
-    output_file = ttf_file.rsplit('.', 1)[0] + '.txt'
-    ttf_to_readable(ttf_file, output_file)
+    in_path = f"./{family2}-{family1}.ttf"
+    out_path = in_path.rsplit('.', 1)[0] + '.txt'
+    ttf_to_readable(in_path, out_path)
