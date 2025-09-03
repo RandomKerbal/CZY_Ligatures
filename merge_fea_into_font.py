@@ -1,39 +1,75 @@
 """
 Requires:
     pip install fonttools
-
-What it does:
-    - Adds the OpenType features from the .fea file into the provided TTF.
-    - Renames the font family, fullname, postscript names, so OS sees it as a different font.
-    - Prints a short report of glyph names referenced in the .fea that are missing from the font (you may need to import those glyphs from a math font).
+    pip install fontFeatures
 """
 import re
 from fontTools import ttLib
-from fontTools.feaLib.builder import addOpenTypeFeatures
+from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
+from fontFeatures.ttLib import unparse
 
 family1 = "JetBrainsMono"  # family of original font
-family2 = "LigCZY"  # family of modified font, usually author's name
+family2 = "LigCZY"  # family of modified font
 subfamily = "Regular"
 FEA_GLYPH_RE = re.compile(r"by\s+([A-Za-z0-9_]+)\s*;")
 
 
-def get_glyphs_from_fea(fea_text):
-    """Return a sorted set of glyph names referenced by 'by <glyph>' in the .fea"""
-    return sorted(set(FEA_GLYPH_RE.findall(fea_text)))
+def font_to_strFea(font) -> str:
+    """Extract OpenType Layout Tables from font, convert into .fea format str."""
+    return unparse(font).asFea()
 
 
-def rename_name_table(font, new_family, new_subfamily, new_fullname, new_psname):
+def fea_to_str(fea_path: str) -> str:
+    with open(fea_path, 'r') as f:
+        return f.read()
+
+
+def clean_and_relocate(out_fea: str) -> tuple:
     """
-    Update the font's 'name' table to set Family (1), Subfamily (2), Unique ID (3),
-    Full name (4), and PostScript name (6) for common platforms.
+    - Remove duplicates of 'languagesystem ...;' (keep first one).
+    - Remove ALL 'languagesystem', 'script', and 'language' statement lines from body because feaLib rejects them inside feature/lookup blocks, but only 'languagesystem' are kept in header.
+    :return: tuple(cleaned_text, list_of_duplicate_languagesystem_lines)
+    """
+    languagesystem_regex = re.compile(r'(?im)^[ \t]*(languagesystem\b[^;]*;)[ \t]*\r?\n?')
+    script_regex = re.compile(r'(?im)^[ \t]*script\b[^;]*;[ \t]*\r?\n?')
+    language_regex = re.compile(r'(?im)^[ \t]*language\b[^;]*;[ \t]*\r?\n?')  # singular "language"
+
+    found_langsys = languagesystem_regex.findall(out_fea)
+    seen = set()
+    dup_langsys = []
+    for s in found_langsys:
+        key = s.strip().lower()
+        if key not in seen:
+            seen.add(key)
+            dup_langsys.append(s.strip())
+
+    # remove all occurrences of languagesystem/script/language from the body
+    cleaned = languagesystem_regex.sub('', out_fea)
+    cleaned = script_regex.sub('', cleaned)
+    cleaned = language_regex.sub('', cleaned)
+
+    header_lines = []
+    if dup_langsys:
+        header_lines.append("# --- relocated languagesystem statements (duplicated) ---")
+        header_lines.extend(dup_langsys)
+        header_lines.append("")  # blank line
+
+    new_text = "\n".join(header_lines) + cleaned.lstrip()
+    return new_text, dup_langsys
+
+
+def rename_name_table(font, new_family: str, new_subfamily: str):
+    """
+    Update the font's 'name' table to set Family (1), Subfamily (2), Unique ID (3), Full name (4), and PostScript name (6) for common platforms.
+    For consistency, Family name = Full name = PostScript name
     """
     name_table = font["name"]
 
     # Helper to set for Windows (platformID=3) and Mac (platformID=1)
     targets = [
         # (platformID, platEncID, langID)
-        (3, 1, 0x409),   # Windows, Unicode BMP, English (U.S.)
-        (1, 0, 0),       # Mac, Roman, language 0 (English)
+        (3, 1, 0x409),  # Windows, Unicode BMP, English (U.S.)
+        (1, 0, 0),  # Mac, Roman, language 0 (English)
     ]
 
     # Set Family (1), Subfamily (2), Fullname (4), PostScript (6), and UniqueID (3)
@@ -41,10 +77,10 @@ def rename_name_table(font, new_family, new_subfamily, new_fullname, new_psname)
         try:
             name_table.setName(new_family, 1, platformID, platEncID, langID)
             name_table.setName(new_subfamily, 2, platformID, platEncID, langID)
-            name_table.setName(new_fullname, 4, platformID, platEncID, langID)
-            name_table.setName(new_psname, 6, platformID, platEncID, langID)
+            name_table.setName(new_family, 4, platformID, platEncID, langID)
+            name_table.setName(new_family, 6, platformID, platEncID, langID)
             # Unique font identifier (nameID 3) — put something informative
-            unique_id = f"{new_psname};{new_family}-{new_subfamily}"
+            unique_id = f"{new_family}-{new_subfamily}"
             name_table.setName(unique_id, 3, platformID, platEncID, langID)
         except Exception:
             # Some name records may not accept certain encodings; ignore failures
@@ -53,46 +89,35 @@ def rename_name_table(font, new_family, new_subfamily, new_fullname, new_psname)
 
 def main():
     in_path = f"./{family1}-{subfamily}.ttf"
-    fea_path = f"./{family2}-{family1}.v2.fea"
+    add_path = f"./{family2}-{family1}.v2.fea"
     out_path = f"./{family2}-{family1}.ttf"
 
-    with open(fea_path, "r", encoding="utf-8") as fh:
-        fea_text = fh.read()
-
     font = ttLib.TTFont(in_path)
+    in_fea = font_to_strFea(font)
+    add_fea = fea_to_str(add_path)
 
-    fea_glyphs = get_glyphs_from_fea(fea_text)
-    font_glyphs = set(font.getGlyphOrder())
-    missing = [g for g in fea_glyphs if g not in font_glyphs]
+    missing = set(FEA_GLYPH_RE.findall(add_fea)) - set(font.getGlyphOrder())
     if missing:
         print("\nWARNING: The following glyphs referenced by the .fea are missing from the font:")
-        for g in missing:
-            print("  -", g)
+        for glyph in missing:
+            print("  -", glyph)
 
-    # add the OpenType features
-    try:
-        addOpenTypeFeatures(font, fea_path)
-    except Exception as e:
-        print(f"\nERROR: failed to add OpenType features: {e}")
-        exit()
+    out_fea = add_fea.rstrip() + '\n' + in_fea.rstrip()
 
-    # set new internal names
-    try:
-        # build new full and postscript names (NO spaces)
-        family = f"{family2}-{family1}"
+    out_fea, langs = clean_and_relocate(out_fea)
+    if langs:
+        print("Relocated languagesystem statements:")
+        for lang in langs:
+            print("  ", lang)
 
-        print(f"Internal name table renamed to: {family}")
-        rename_name_table(font, family, subfamily, family, family)
-    except Exception as e:
-        print(f"Warning: failed to rename name table: {e}")
+    addOpenTypeFeaturesFromString(font, out_fea)
 
-    # save output
-    try:
-        font.save(out_path)
-        print(f"\nSUCCESS: Merged font saved to: {out_path}")
-    except Exception as e:
-        print(f"ERROR: Failed to save font: {e}")
-        exit()
+    family = f"{family2}-{family1}"
+    print(f"Internal name table renamed to: {family}")
+    rename_name_table(font, family, subfamily)
+
+    font.save(out_path)
+    print(f"\nSUCCESS: Merged font saved to: {out_path}")
 
 
 if __name__ == '__main__':
