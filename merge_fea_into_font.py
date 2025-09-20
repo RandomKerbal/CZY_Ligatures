@@ -15,13 +15,12 @@ FEA_GLYPH_RE = re.compile(r"by\s+([A-Za-z0-9_]+)\s*;")
 
 
 def font_to_strFea(font) -> str:
-    """Extract OpenType Layout Tables from font, convert into .fea format str."""
-    return unparse(font).asFea()
+    return unparse(font).asFea().rstrip()
 
 
 def fea_to_str(fea_path: str) -> str:
     with open(fea_path, 'r') as f:
-        return f.read()
+        return f.read().rstrip()
 
 
 def clean_and_relocate(out_fea: str) -> tuple:
@@ -92,21 +91,10 @@ def main():
     add_path = f"./{family2}-{family1}.v2.fea"
     out_path = f"./{family2}-{family1}.ttf"
 
-    print(f"Input path: {in_path}")
-    print(f"Features path: {add_path}")
-    print(f"Output path: {out_path}", end='\n\n')
+    print(f"Input path: {in_path}\nFeatures path: {add_path}\nOutput path: {out_path}\n\n")
 
-    font = ttLib.TTFont(in_path)
-    in_fea = font_to_strFea(font)
-    add_fea = fea_to_str(add_path)
-
-    missing = set(FEA_GLYPH_RE.findall(add_fea)) - set(font.getGlyphOrder())
-    if missing:
-        print("\nWARNING: The following glyphs referenced by the .fea are missing from the font:")
-        for glyph in missing:
-            print("  -", glyph)
-
-    out_fea = add_fea.rstrip() + '\n' + in_fea.rstrip()
+    in_font = ttLib.TTFont(in_path)
+    out_fea = fea_to_str(add_path) + '\n' + font_to_strFea(in_font)
 
     out_fea, langs = clean_and_relocate(out_fea)
     if langs:
@@ -114,13 +102,13 @@ def main():
         for lang in langs:
             print("  ", lang)
 
-    addOpenTypeFeaturesFromString(font, out_fea)
+    addOpenTypeFeaturesFromString(in_font, out_fea)
 
     family = f"{family2}-{family1}"
     print(f"Internal name table renamed to: {family}")
-    rename_name_table(font, family, subfamily)
+    rename_name_table(in_font, family, subfamily)
 
-    font.save(out_path)
+    in_font.save(out_path)
     print(f"\nSUCCESS: Merged font saved to: {out_path}")
 
 

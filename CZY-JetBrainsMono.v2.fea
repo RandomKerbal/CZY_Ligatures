@@ -162,11 +162,9 @@ lookup main {
 
 	sub backslash n' by uni21A9;
 	
-	sub f' [i I] [x X] [m M] [e E] by uni26A0 f;
-	sub F' [i I] [x X] [m M] [e E] by uni26A0 F;
+	sub [t T]' [i I]' [x X]' [m M]' [e E]' by fixme;
 
-	sub t' [o O] [d D] [o O] by uni26A0 t;
-	sub T' [o O] [d D] [o O] by uni26A0 T;
+	sub [t T]' [o O]' [d D]' [o O]' by todo;
 
 	ignore sub @char d' [x y z];
 	ignore sub d' [x y z] @char;
