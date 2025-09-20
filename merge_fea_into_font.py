@@ -9,7 +9,7 @@ from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
 from fontFeatures.ttLib import unparse
 
 family1 = "JetBrainsMono"  # family of original font
-family2 = "LigCZY"  # family of modified font
+family2 = "CZY"  # family of modified font
 subfamily = "Regular"
 FEA_GLYPH_RE = re.compile(r"by\s+([A-Za-z0-9_]+)\s*;")
 
@@ -88,9 +88,13 @@ def rename_name_table(font, new_family: str, new_subfamily: str):
 
 
 def main():
-    in_path = f"./{family1}-{subfamily}.ttf"
+    in_path = f"./{family2}-{family1}-noSub.ttf"
     add_path = f"./{family2}-{family1}.v2.fea"
     out_path = f"./{family2}-{family1}.ttf"
+
+    print(f"Input path: {in_path}")
+    print(f"Features path: {add_path}")
+    print(f"Output path: {out_path}", end='\n\n')
 
     font = ttLib.TTFont(in_path)
     in_fea = font_to_strFea(font)
